@@ -5,3 +5,18 @@ then checks those buffers for git changes that haven't been pushed.
 
 This at least helps you remember when the buffers are still open.
 
+It's a minor mode so just turn it on with:
+
+{{{
+M-x nic-magit-track
+}}}
+
+If you have unpushed magit buffers they will appear in the modeline.
+
+Doing:
+
+{{{
+M-x nic-magit-next-buffer
+}}}
+
+will move you to the next buffer that you have unpushed commits in.
