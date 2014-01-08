@@ -1,0 +1,7 @@
+Check the status of git repositories with a simple minor mode.
+
+This is very simple, it just lists your buffers for magit buffers and
+then checks those buffers for git changes that haven't been pushed.
+
+This at least helps you remember when the buffers are still open.
+
