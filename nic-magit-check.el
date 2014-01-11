@@ -33,7 +33,7 @@
 The value is a propertized string, the `:unpushed' property
 contains the list of the unpushed repositories.")
 
-(defun nic-magit-check-set (unpushed)
+(defun nic-magit/check-set (unpushed)
   (setq nic-magit-check-status
         (propertize 
          (if unpushed
@@ -46,10 +46,23 @@ contains the list of the unpushed repositories.")
               :unpushed unpushed)
              "") 'help-echo "Which magit buffers need pushing")))
 
+
+(defvar nic-magit/idle-timer nil
+  "Contains the idle timer for idly checking magit buffers.")
+
+(defun nic-magit/check-init ()
+  "Initializes `nic-magit/idle-timer'."
+  (unless (timerp nic-magit/idle-timer)
+    (setq nic-magit/idle-timer
+          (run-with-idle-timer 10.0 t 'nic-magit-check))))
+
 (defun nic-magit-check ()
   "Main function, checks unpushed magits.
 
-Updates the variable `nic-magit-check-status'"
+Updates the variable `nic-magit-check-status'.
+
+This also calls `nic-magit/check-init' which spawns a timer to
+repeatedly do this if no timer is present."
   (interactive)
   (let ((unpushed
          (->> (buffer-list)
@@ -64,7 +77,9 @@ Updates the variable `nic-magit-check-status'"
                   (save-match-data
                     (goto-char (point-min))
                     (re-search-forward "Unpushed commits" nil t)))))))))
-    (nic-magit-check-set unpushed)))
+    (nic-magit/check-set unpushed)
+    ;; FIXME - the timer spawning should probably be a customize option
+    (nic-magit/check-init)))
 
 (defun nic-magit-next-buffer ()
   "Pop the next unpushed buffer into view."
@@ -76,7 +91,7 @@ Updates the variable `nic-magit-check-status'"
      (nic-magit-check-set (append (cdr unpushed-l) (list top)))
      top)))
 
-(defun nic-magit-modeline-content ()
+(defun nic-magit/modeline-content ()
   (concat " " nic-magit-check-status))
 
 ;;;###autoload
@@ -84,7 +99,7 @@ Updates the variable `nic-magit-check-status'"
     "Track `magit' buffers that are unsynced."
   nil nil nil
   :global t
-  :lighter (:eval (nic-magit-modeline-content))
+  :lighter (:eval (nic-magit/modeline-content))
   (nic-magit-check))
 
 (provide 'nic-magit-check)
