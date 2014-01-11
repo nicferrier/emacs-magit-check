@@ -88,7 +88,7 @@ repeatedly do this if no timer is present."
    (let* ((ll (text-properties-at 0 nic-magit-check-status))
           (unpushed-l (plist-get ll :unpushed))
           (top (car unpushed-l)))
-     (nic-magit-check-set (append (cdr unpushed-l) (list top)))
+     (nic-magit/check-set (append (cdr unpushed-l) (list top)))
      top)))
 
 (defun nic-magit/modeline-content ()
